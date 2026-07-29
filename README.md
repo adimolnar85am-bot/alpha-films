@@ -2,8 +2,13 @@
 
 Rețete **Picture Profile** pentru Sony A7 III — emulații film **color** și **B&W** (Fujifilm, Kodak inclusiv discontinue, CineStill).
 
-**App publică:** https://alpha-film.vercel.app  
-Deschide linkul în browser — fără cont Vercel, fără login.
+## Link public (fără login)
+
+**https://alpha-film.vercel.app**
+
+Deschide în orice browser / pe iPhone — fără cont Vercel, fără autentificare.
+
+**Cod sursă:** https://github.com/adimolnar85am-bot/alpha-films
 
 ## Instalează pe iPhone
 
