@@ -1,7 +1,10 @@
 import { contrastLabels, grainLabels } from '../data/films'
+import { getCaptureSettings } from '../data/film-settings'
 import { formatSigned } from '../lib/generate'
+import { A7III_EMULATION_NOTE, validatePictureProfile } from '../lib/a7iiiValidate'
 import type { FilmRecipe, SonyPictureProfile } from '../types'
 import { FilmCanister } from './FilmCanister'
+import { FavoriteButton } from './FavoriteButton'
 import { ReferenceLook } from './ReferenceLook'
 import { useState } from 'react'
 
@@ -77,6 +80,15 @@ function recipeText(film: FilmRecipe): string {
     `Sharpness: ${formatSigned(cl.sharpness)}`,
   ].filter((l) => l !== '')
   if (film.filterHint) lines.push('', `Filtru: ${film.filterHint}`)
+  const cap = getCaptureSettings(film.id)
+  if (cap) {
+    lines.push('', '—— Setări cameră A7 III ——')
+    lines.push(`White Balance: ${cap.whiteBalance} (${cap.whiteBalanceKelvin}K)`)
+    lines.push(`ISO recomandat: ${cap.recommendedIso}`)
+    if (cap.isoRange) lines.push(`Interval ISO: ${cap.isoRange}`)
+    if (cap.bwBalance) lines.push(`B/W Balance: ${cap.bwBalance}`)
+    if (cap.notes) lines.push(`Notă: ${cap.notes}`)
+  }
   return lines.join('\n')
 }
 
@@ -99,6 +111,9 @@ export function FilmDetail({
   const [copied, setCopied] = useState(false)
   const [showAlt, setShowAlt] = useState(false)
   const pp = film.pictureProfile
+  const cap = getCaptureSettings(film.id)
+  const validation = validatePictureProfile(film.id, pp, film.type)
+  const isValid = validation.every((v) => v.severity !== 'error')
 
   const copy = async () => {
     try {
@@ -118,6 +133,7 @@ export function FilmDetail({
 
       <div className="detail-hero">
         <div className="detail-can-wrap">
+          <FavoriteButton filmId={film.id} className="detail-fav" />
           <FilmCanister film={film} size={110} />
         </div>
         <div>
@@ -137,6 +153,31 @@ export function FilmDetail({
       </div>
 
       <ReferenceLook film={film} />
+
+      {cap && (
+        <section className="section capture-section">
+          <h3>Setări cameră · A7 III</h3>
+          <div className="settings">
+            <Setting
+              label="White Balance"
+              value={`${cap.whiteBalance} · ${cap.whiteBalanceKelvin}K`}
+            />
+            <Setting label="ISO recomandat" value={String(cap.recommendedIso)} />
+            {cap.isoRange && (
+              <Setting label="Interval ISO" value={cap.isoRange} />
+            )}
+            {cap.bwBalance && film.type === 'bw' && (
+              <Setting label="B/W Balance (PP)" value={cap.bwBalance} />
+            )}
+          </div>
+          {cap.notes && <p className="section-note">{cap.notes}</p>}
+        </section>
+      )}
+
+      <div className={`valid-badge ${isValid ? 'valid-ok' : 'valid-warn'}`}>
+        {isValid ? '✓ Verificat pentru Sony A7 III' : '⚠ Verifică setările PP'}
+      </div>
+      <p className="section-note emulation-note">{A7III_EMULATION_NOTE}</p>
 
       <p className="prose">{film.character}</p>
 
@@ -198,6 +239,9 @@ export function FilmDetail({
                 />
               )}
             </>
+          )}
+          {cap?.bwBalance && film.type === 'bw' && (
+            <Setting label="B/W Balance" value={cap.bwBalance} />
           )}
         </div>
       </section>

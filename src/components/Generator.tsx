@@ -126,13 +126,6 @@ export function Generator({
           </button>
         ))}
       </div>
-      <footer className="site-footer">
-        <p>© 2026 Alpha Films. All rights reserved.</p>
-        <p>
-          Emulații independente — neafiliate cu Sony, Kodak, Fujifilm, Ilford
-          sau CineStill.
-        </p>
-      </footer>
     </div>
   )
 }

@@ -7,9 +7,11 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
+    "validate": "npx tsx scripts/validate-recipes.ts",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.111.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
   },
